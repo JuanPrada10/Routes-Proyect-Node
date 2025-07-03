@@ -33,7 +33,6 @@ PASS_DB=u9Tjo7
 
 
 ```
-Para desarrollo (con recarga automática):
 ## 🚀 Ejecución del servidor
 ```bash
 
