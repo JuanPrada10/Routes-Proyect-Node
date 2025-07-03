@@ -16,11 +16,10 @@ npm install
 -Configura las siguientes variables (ajusta según tus necesidades):
    env:
    PORT=3000
-   # Ejemplo para MongoDB Atlas:
-   # MONGODB_URI=mongodb+srv://usuario:contraseña@cluster0.mongodb.net/nombre-db
-No commits el archivo .env (debe estar listado en tu .gitignore)
+   ##Ejemplo para MongoDB Atlas:
+    MONGODB_URI=mongodb+srv://usuario:contraseña@cluster0.mongodb.net/nombre-db
 
-🚀 Ejecución del servidor
+##🚀 Ejecución del servidor
 Para desarrollo (con recarga automática):
-bash
+```bash
 npm run dev
