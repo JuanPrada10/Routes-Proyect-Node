@@ -1,0 +1,304 @@
+openapi: 3.0.4
+info:
+  title: Rutas de Entrega API
+  description: API para la gestión de vehículos, conductores, rutas y puntos de entrega. Proyecto de Programación por Componentes.
+  version: 1.0.0
+servers:
+  - url: http://localhost:5100/api
+
+paths:
+  /vehiculos:
+    get:
+      tags: [Vehículos]
+      summary: Obtener todos los vehículos
+      responses:
+        "200":
+          description: Lista de vehículos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Vehiculo"
+    post:
+      tags: [Vehículos]
+      summary: Crear un nuevo vehículo
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Vehiculo"
+      responses:
+        "201":
+          description: Vehículo creado
+
+  /vehiculos/{placa}:
+    get:
+      tags: [Vehículos]
+      summary: Obtener un vehículo por placa
+      parameters:
+        - name: placa
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Vehículo encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Vehiculo"
+        "404":
+          description: Vehículo no encontrado
+    put:
+      tags: [Vehículos]
+      summary: Actualizar un vehículo por placa
+      parameters:
+        - name: placa
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Vehiculo"
+      responses:
+        "200":
+          description: Vehículo actualizado
+    delete:
+      tags: [Vehículos]
+      summary: Eliminar un vehículo por placa
+      parameters:
+        - name: placa
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Vehículo eliminado
+
+  /conductores:
+    get:
+      tags: [Conductores]
+      summary: Obtener todos los conductores
+      responses:
+        "200":
+          description: Lista de conductores
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Conductor"
+    post:
+      tags: [Conductores]
+      summary: Crear un nuevo conductor
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Conductor"
+      responses:
+        "201":
+          description: Conductor creado
+
+  /conductores/{id}:
+    get:
+      tags: [Conductores]
+      summary: Obtener un conductor por ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Conductor encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Conductor"
+        "404":
+          description: Conductor no encontrado
+    put:
+      tags: [Conductores]
+      summary: Actualizar un Conductor por ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Conductor"
+      responses:
+        "200":
+          description: Conductor actualizado
+    delete:
+      tags: [Conductores]
+      summary: Eliminar un Conductor por ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Conductor eliminado
+
+  /conductores/{id}/rutas:
+    get:
+      tags: [Rutas]
+      summary: Obtener rutas de un conductor
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Lista de rutas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Ruta"
+    post:
+      tags: [Rutas]
+      summary: Crear una ruta para un conductor
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Ruta"
+      responses:
+        "201":
+          description: Ruta creada
+
+  /rutas/{id}/detalles:
+    get:
+      tags: [DetalleRuta]
+      summary: Obtener puntos de entrega de una ruta
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Lista de puntos de entrega
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DetalleRuta"
+    post:
+      tags: [DetalleRuta]
+      summary: Agregar puntos de entrega a una ruta
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/DetalleRuta"
+      responses:
+        "201":
+          description: Puntos agregados
+
+components:
+  schemas:
+    Vehiculo:
+      type: object
+      required: [placa, modelo, color, marca, capacidad_carga]
+      properties:
+        placa:
+          type: string
+        modelo:
+          type: string
+        color:
+          type: string
+        marca:
+          type: string
+        capacidad_carga:
+          type: number
+
+    Conductor:
+      type: object
+      required: [_id, nombres, apellidos, numero_licencia, telefono, correo]
+      properties:
+        _id:
+          type: string
+        nombres:
+          type: string
+        apellidos:
+          type: string
+        numero_licencia:
+          type: string
+        telefono:
+          type: string
+        correo:
+          type: string
+
+    Ruta:
+      type: object
+      required: [_id, fecha, conductor_id, vehiculo_placa]
+      properties:
+        _id:
+          type: string
+        fecha:
+          type: string
+          format: date
+        conductor_id:
+          type: string
+        vehiculo_placa:
+          type: string
+
+    DetalleRuta:
+      type: object
+      required:
+        [id_detalle, id_ruta, latitud, longitud, direccion, numero_paquete]
+      properties:
+        id_detalle:
+          type: string
+        id_ruta:
+          type: string
+        latitud:
+          type: number
+        longitud:
+          type: number
+        direccion:
+          type: string
+        numero_paquete:
+          type: string
