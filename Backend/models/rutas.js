@@ -7,10 +7,12 @@ class RutaModelo {
     return await Ruta.create(ruta);
   }
   async getAll() {
-    return await Ruta.find();
+    return await Ruta.find().populate("conductor_id").populate("vehiculo_id");
   }
   async getById(id) {
-    return await Ruta.findById({ _id: new mongoose.Types.ObjectId(id) });
+    return await Ruta.findById(new mongoose.Types.ObjectId(id))
+      .populate("conductor_id")
+      .populate("vehiculo_id");
   }
   async update(id, ruta) {
     return await Ruta.findOneAndUpdate(
