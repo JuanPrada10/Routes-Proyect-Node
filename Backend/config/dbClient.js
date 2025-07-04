@@ -5,8 +5,13 @@ class dbClient {
     this.conectarBD();
   }
   async conectarBD() {
-    const queryString = `mongodb+srv://${process.env.USER_DB}:${process.env.PASS_DB}${process.env.SERVER_DB}/routes?retryWrites=true&w=majority`;
-    await mongoose.connect(queryString);
+    try {
+      const queryString = `mongodb+srv://${process.env.USER_DB}:${process.env.PASS_DB}${process.env.SERVER_DB}/routes?retryWrites=true&w=majority`;
+      await mongoose.connect(queryString);
+      console.log("Conexon Exitosa");
+    } catch (error) {
+      console.log("No se pudo conectar error:", error);
+    }
   }
   async cerrarConexion() {
     try {

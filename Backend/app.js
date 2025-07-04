@@ -5,9 +5,12 @@ import routesRutas from "./routes/rutas.js";
 import "dotenv/config";
 import bodyParser from "body-parser";
 import dbClient from "./config/dbClient.js";
+import swaggerUi from "swagger-ui-express";
+import specs from "./swagger/swagger.js";
 
 const app = express();
 app.use(bodyParser.json());
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use("/api", routesVehiculos);
