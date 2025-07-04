@@ -37,3 +37,23 @@ PASS_DB=u9Tjo7
 ```bash
 
 npm run dev
+```
+# Configuración del Frontend
+
+## 📥 Instalación de dependencias
+1. **Asegúrate de tener Node.js instalado** (versión 18 o superior)
+2. **Posiciónate en la carpeta del Frontend**:
+```bash
+	cd Routes-Proyect-Node/frontend
+```
+3.  **Instala todas las dependencias**:
+    
+
+```bash
+
+npm install
+```
+4. **correr el servidor del Front**
+   ```bash
+   npm run dev
+   ```
