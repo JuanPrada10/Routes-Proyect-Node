@@ -6,6 +6,7 @@ import {
   Locate,
   House,
 } from "lucide-react";
+import { Link } from "react-router-dom";
 function SideBar() {
   return (
     <>
@@ -16,27 +17,27 @@ function SideBar() {
         <ul className="flex flex-col text-xl font-semibold gap-4  p-6 ">
           <li className="flex gap-2 items-center p-2 rounded-xl  hover:bg-white/10 hover:scale-105 transition duration-150 ">
             <House />
-            <a href="">Home</a>
+            <Link to="/">Home</Link>
           </li>
           <li className="flex gap-2 items-center p-2 rounded-xl hover:scale-105 hover:bg-white/10 transition duration-150">
             <Car />
-            <a href="">Vehiculos</a>
+            <Link to="/Vehiculos">Vehiculos</Link>
           </li>
           <li className="flex gap-2 items-center p-2 rounded-xl hover:scale-105 hover:bg-white/10 transition duration-150">
             <SquareUser />
-            <a href="">Conductores</a>
+            <Link to="/Conductores">Conductores</Link>
           </li>
           <li className="flex gap-2 items-center p-2 rounded-xl hover:scale-105 hover:bg-white/10 transition duration-150">
             <LocationEdit />
-            <a href="">Programar Ruta</a>
+            <Link to="/Programar">Programar Ruta</Link>
           </li>
           <li className="flex gap-2 items-center p-2 rounded-xl hover:scale-105 hover:bg-white/10 transition duration-150">
             <MapPinned />
-            <a href="">Ver Mapa</a>
+            <Link to="/Mapa">Ver Mapa</Link>
           </li>
           <li className="flex gap-2 items-center p-2 rounded-xl hover:scale-105 hover:bg-white/10 transition duration-150">
             <Locate />
-            <a href="">Buscar Ruta</a>
+            <Link to="/Buscar"> Buscar Ruta</Link>
           </li>
         </ul>
       </nav>
