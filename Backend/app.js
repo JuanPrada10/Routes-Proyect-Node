@@ -6,10 +6,14 @@ import routesDetalleRutas from "./routes/detalleRuta.js";
 import "dotenv/config";
 import bodyParser from "body-parser";
 import dbClient from "./config/dbClient.js";
+import swaggerUI from "swagger-ui-express";
+import specs from "./swagger/swagger.js";
 
 const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
 
 app.use("/api", routesVehiculos);
 app.use("/api", routesConductores);

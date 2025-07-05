@@ -9,20 +9,14 @@ class vehiculosModelo {
   async getAll() {
     return await Vehiculo.find();
   }
-  async getById(id) {
-    return await Vehiculo.findById({ _id: new mongoose.Types.ObjectId(id) });
+  async getById(placa) {
+    return await Vehiculo.findOne({ placa });
   }
-  async update(id, vehiculo) {
-    return await Vehiculo.findOneAndUpdate(
-      { _id: new mongoose.Types.ObjectId(id) },
-      vehiculo,
-      { new: true }
-    );
+  async update(placa, vehiculo) {
+    return await Vehiculo.findOneAndUpdate({ placa }, vehiculo, { new: true });
   }
-  async delete(id) {
-    return await Vehiculo.findOneAndDelete({
-      _id: new mongoose.Types.ObjectId(id),
-    });
+  async delete(placa) {
+    return await Vehiculo.findOneAndDelete({ placa });
   }
 }
 export default new vehiculosModelo();

@@ -40,6 +40,7 @@ class DetalleRutasController {
   async getById(req, res) {
     try {
       const { id } = req.params;
+
       const data = await detallerutaModelo.getById(id);
       res.status(200).json(data);
     } catch (e) {
