@@ -33,14 +33,6 @@ function App() {
             }
           />
           <Route path="/mapa" element={<Map></Map>} />
-          <Route
-            path="/buscar"
-            element={
-              <>
-                <h1> Aqui componente Buscar Ruta</h1>
-              </>
-            }
-          />
         </Routes>
       </section>
     </div>
