@@ -4,23 +4,38 @@ import DetalleRuta from "../schemas/detalleRuta.js";
 class DetalleRutaModelo {
   constructor() {}
 
-  // Crear múltiples puntos de entrega para una ruta
-  async createMany(rutaId, detalles) {
-    const detallesConRuta = detalles.map((detalle) => ({
-      ...detalle,
-      id_ruta: new mongoose.Types.ObjectId(rutaId),
-    }));
-    return await DetalleRuta.insertMany(detallesConRuta);
+  async create(detalleRuta) {
+    return await DetalleRuta.create(detalleRuta);
   }
-
-  // Obtener todos los puntos de una ruta
-  async getByRutaId(rutaId) {
-    return await DetalleRuta.find({ id_ruta: rutaId });
+  async getAll() {
+    return await DetalleRuta.find().populate({
+      path: 'id_ruta',
+      populate: [
+        { path: 'conductor_id', model: 'conductores' },
+        { path: 'vehiculo_id', model: 'vehiculos' }
+      ]
+    });
   }
-
-  // (opcional) Eliminar todos los detalles de una ruta
-  async deleteByRutaId(rutaId) {
-    return await DetalleRuta.deleteMany({ id_ruta: rutaId });
+  async getById(id) {
+    return await DetalleRuta.findById(id).populate({
+      path: 'id_ruta',
+      populate: [
+        { path: 'conductor_id', model: 'conductores' },
+        { path: 'vehiculo_id', model: 'vehiculos' }
+      ]
+    });
+  }
+  async update(id, detalleRuta) {
+    return await DetalleRuta.findOneAndUpdate(
+      { _id: new mongoose.Types.ObjectId(id) },
+      detalleRuta,
+      { new: true }
+    );
+  }
+  async delete(id) {
+    return await DetalleRuta.findOneAndDelete({
+      _id: new mongoose.Types.ObjectId(id),
+    });
   }
 }
 

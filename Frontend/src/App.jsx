@@ -1,6 +1,10 @@
 import SideBar from "./components/SideBar";
 import Home from "./components/Home";
+
 import Vehiculos from "./components/Vehiculos";
+
+import Map from "./components/Map";
+
 import { Routes, Route } from "react-router-dom";
 function App() {
   return (
@@ -28,14 +32,7 @@ function App() {
               </>
             }
           />
-          <Route
-            path="/mapa"
-            element={
-              <>
-                <h1> Aqui componente Visualizacion de Mapa</h1>
-              </>
-            }
-          />
+          <Route path="/mapa" element={<Map></Map>} />
           <Route
             path="/buscar"
             element={
