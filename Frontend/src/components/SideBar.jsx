@@ -35,10 +35,6 @@ function SideBar() {
             <MapPinned />
             <Link to="/Mapa">Ver Mapa</Link>
           </li>
-          <li className="flex gap-2 items-center p-2 rounded-xl hover:scale-105 hover:bg-white/10 transition duration-150">
-            <Locate />
-            <Link to="/Buscar"> Buscar Ruta</Link>
-          </li>
         </ul>
       </nav>
     </>
