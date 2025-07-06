@@ -1,22 +1,51 @@
 import Card from "./Card";
 import logo from "../assets/car.svg";
+import SearchInput from "./SearchInput";
+import { DatabaseBackup } from "lucide-react";
+import { useState, useEffect } from "react";
+import { PacmanLoader } from "react-spinners";
+
 function Vehiculos() {
-  const cars = [
-    {
-      id: 1,
-      placa: "ABCD123",
-      modelo: "2001",
-      color: "Verde",
-      marca: "BMW",
-      capacidad_carga: 1200,
-    },
-  ];
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    setLoading(true);
+    const fetchData = async () => {
+      try {
+        const result = await fetch("http://localhost:5100/api/vehiculos");
+        const json = await result.json();
+        console.log(json);
+        setData(json);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   return (
     <>
-      <div className="grid grid-cols-3 gap-4 justify-items-center m-20">
-        <Card data={cars} logo={logo}></Card>
-        <Card data={cars} logo={logo}></Card>
-        <Card data={cars} logo={logo}></Card>
+      <div className="flex flex-col min-h-screen">
+        <SearchInput />
+        {loading ? (
+          <div className="flex-1 flex justify-center items-center pb-50">
+            <PacmanLoader />
+          </div>
+        ) : data.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-4 md:p-8 lg:p-12">
+            {data?.map((car) => (
+              <Card key={car._id} data={car} logo={logo} />
+            ))}
+          </div>
+        ) : (
+          <div className="flex flex-1 flex-col w-full items-center justify-center pb-50">
+            <h1 className="text-4xl font-semibold">No hay datos</h1>
+            <DatabaseBackup size={64} />
+          </div>
+        )}
       </div>
     </>
   );
