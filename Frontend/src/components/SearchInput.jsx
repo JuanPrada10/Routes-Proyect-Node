@@ -1,8 +1,8 @@
 import { Search, SquarePlus } from "lucide-react";
-function SearchInput() {
+function SearchInput({ setModal, modal }) {
   return (
     <>
-      <div className="w-full flex justify-between pt-6 px-12 ">
+      <div className="w-full flex justify-between items-center pt-6 px-12 ">
         <div className="flex p-2">
           <input
             type="search"
@@ -13,7 +13,11 @@ function SearchInput() {
             <Search color="white" />
           </div>
         </div>
-        <button className="bg-green-600 h-8 w-24 rounded-sm mx-12 hover:bg-green-700 transition-all duration-150 flex justify-center items-center shadow-xl">
+        <button
+          onClick={() => setModal(!modal)}
+          className="bg-green-600 h-8 w-24 rounded-sm mx-12 hover:bg-green-700 transition-all duration-150 flex justify-center items-center shadow-xl gap-2 p-2 text-white"
+        >
+          Agregar
           <SquarePlus color="white" size={24} />
         </button>
       </div>
