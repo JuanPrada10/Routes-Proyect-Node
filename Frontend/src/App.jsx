@@ -1,12 +1,13 @@
 import SideBar from "./components/SideBar";
 import Home from "./components/Home";
+import Vehiculos from "./components/Vehiculos";
 import { Routes, Route } from "react-router-dom";
 function App() {
   return (
     <div className="flex">
-      <aide>
+      <aside>
         <SideBar />
-      </aide>
+      </aside>
       <section className="flex-1">
         <Routes>
           <Route path="/" element={<Home></Home>} />
@@ -18,14 +19,7 @@ function App() {
               </>
             }
           />
-          <Route
-            path="/vehiculos"
-            element={
-              <>
-                <h1> Aqui componente CRUD de Vehiciulos</h1>
-              </>
-            }
-          />
+          <Route path="/vehiculos" element={<Vehiculos />} />
           <Route
             path="/programar"
             element={

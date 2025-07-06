@@ -10,7 +10,7 @@ import { Link } from "react-router-dom";
 function SideBar() {
   return (
     <>
-      <nav className="bg-gradient-to-r from-slate-900 via-gray-800 to-slate-800 min-h-screen w-80 text-white flex flex-col  gap-20">
+      <nav className="bg-gradient-to-tr from-slate-900 via-slate-700 to-slate-800 min-h-screen w-80 text-white flex flex-col  gap-20">
         <div className="flex justify-center mt-10">
           <h1 className="text-3xl font-bold">Gestor de Rutas</h1>
         </div>
