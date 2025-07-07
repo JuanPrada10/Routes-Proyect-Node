@@ -2,7 +2,7 @@ openapi: 3.0.4
 info:
   title: Rutas de Entrega API
   description: API para la gestión de vehículos, conductores, rutas y puntos de entrega. Proyecto de Programación por Componentes.
-  version: 1.0.0
+  version: 1.0.1
 servers:
   - url: http://localhost:5100/api
 
@@ -20,6 +20,14 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Vehiculo"
+              examples:
+                ejemplo:
+                  value:
+                    - placa: "ABC123"
+                      modelo: "2020"
+                      color: "Azul"
+                      marca: "Renault"
+                      capacidad_carga: 1500
     post:
       tags: [Vehículos]
       summary: Crear un nuevo vehículo
@@ -29,6 +37,12 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/Vehiculo"
+            example:
+              placa: "DEF456"
+              modelo: "2022"
+              color: "Rojo"
+              marca: "Chevrolet"
+              capacidad_carga: 2000
       responses:
         "201":
           description: Vehículo creado
@@ -159,16 +173,10 @@ paths:
         "204":
           description: Conductor eliminado
 
-  /conductores/{id}/rutas:
+  /rutas:
     get:
       tags: [Rutas]
-      summary: Obtener rutas de un conductor
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
+      summary: Obtener todas las rutas
       responses:
         "200":
           description: Lista de rutas
@@ -180,7 +188,39 @@ paths:
                   $ref: "#/components/schemas/Ruta"
     post:
       tags: [Rutas]
-      summary: Crear una ruta para un conductor
+      summary: Crear una nueva ruta
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Ruta"
+      responses:
+        "201":
+          description: Ruta creada
+
+  /rutas/{id}:
+    get:
+      tags: [Rutas]
+      summary: Obtener una ruta por ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Ruta encontrada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Ruta"
+        "404":
+          description: Ruta no encontrada
+    put:
+      tags: [Rutas]
+      summary: Actualizar una ruta por ID
       parameters:
         - name: id
           in: path
@@ -194,13 +234,11 @@ paths:
             schema:
               $ref: "#/components/schemas/Ruta"
       responses:
-        "201":
-          description: Ruta creada
-
-  /rutas/{id}/detalles:
-    get:
-      tags: [DetalleRuta]
-      summary: Obtener puntos de entrega de una ruta
+        "200":
+          description: Ruta actualizada
+    delete:
+      tags: [Rutas]
+      summary: Eliminar una ruta por ID
       parameters:
         - name: id
           in: path
@@ -208,8 +246,16 @@ paths:
           schema:
             type: string
       responses:
+        "204":
+          description: Ruta eliminada
+
+  /detalleRuta:
+    get:
+      tags: [DetalleRuta]
+      summary: Obtener todos los detalles de ruta
+      responses:
         "200":
-          description: Lista de puntos de entrega
+          description: Lista de detalles de ruta
           content:
             application/json:
               schema:
@@ -218,7 +264,39 @@ paths:
                   $ref: "#/components/schemas/DetalleRuta"
     post:
       tags: [DetalleRuta]
-      summary: Agregar puntos de entrega a una ruta
+      summary: Crear un nuevo detalle de ruta
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DetalleRuta"
+      responses:
+        "201":
+          description: Detalle de ruta creado
+
+  /detalleRuta/{id}:
+    get:
+      tags: [DetalleRuta]
+      summary: Obtener un detalle de ruta por ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Detalle de ruta encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DetalleRuta"
+        "404":
+          description: Detalle de ruta no encontrado
+    put:
+      tags: [DetalleRuta]
+      summary: Actualizar un detalle de ruta por ID
       parameters:
         - name: id
           in: path
@@ -230,12 +308,22 @@ paths:
         content:
           application/json:
             schema:
-              type: array
-              items:
-                $ref: "#/components/schemas/DetalleRuta"
+              $ref: "#/components/schemas/DetalleRuta"
       responses:
-        "201":
-          description: Puntos agregados
+        "200":
+          description: Detalle de ruta actualizado
+    delete:
+      tags: [DetalleRuta]
+      summary: Eliminar un detalle de ruta por ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Detalle de ruta eliminado
 
 components:
   schemas:
@@ -253,10 +341,9 @@ components:
           type: string
         capacidad_carga:
           type: number
-
     Conductor:
       type: object
-      required: [_id, nombres, apellidos, numero_licencia, telefono, correo]
+      required: [nombres, apellidos, numero_licencia, telefono, correo]
       properties:
         _id:
           type: string
@@ -270,10 +357,9 @@ components:
           type: string
         correo:
           type: string
-
     Ruta:
       type: object
-      required: [_id, fecha, conductor_id, vehiculo_placa]
+      required: [fecha, conductor_id, vehiculo_id]
       properties:
         _id:
           type: string
@@ -282,15 +368,13 @@ components:
           format: date
         conductor_id:
           type: string
-        vehiculo_placa:
+        vehiculo_id:
           type: string
-
     DetalleRuta:
       type: object
-      required:
-        [id_detalle, id_ruta, latitud, longitud, direccion, numero_paquete]
+      required: [id_ruta, latitud, longitud, direccion, numero_paquete]
       properties:
-        id_detalle:
+        _id:
           type: string
         id_ruta:
           type: string
