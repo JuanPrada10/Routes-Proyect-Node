@@ -111,10 +111,15 @@ function Conductores() {
                         },
                       }
                     );
-                    await response.json();
-                    await fetchData();
+                    const data = await response.json();
+                    if (!response.ok && data?.error) {
+                      alert(data.error);
+                    } else {
+                      await fetchData();
+                    }
                   } catch (error) {
-                    console.error("error al eliminar:", error);
+                    alert("Error al eliminar el conductor: ");
+                    console.log("Error al eliminar: ", error);
                   }
                 }}
               >

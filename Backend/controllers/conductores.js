@@ -21,6 +21,21 @@ class conductoresController {
   async delete(req, res) {
     try {
       const { id } = req.params;
+      // Verificar si el conductor tiene rutas asociadas
+      const rutas = await import("../models/rutas.js").then((m) =>
+        m.default.getAll()
+      );
+      const tieneRutas = rutas.some(
+        (r) => r.conductor_id && r.conductor_id._id.toString() === id
+      );
+      if (tieneRutas) {
+        return res
+          .status(400)
+          .json({
+            error:
+              "No se puede eliminar el conductor porque tiene rutas asociadas.",
+          });
+      }
       const data = await conductoresModelo.delete(id);
       res.status(206).json(data);
     } catch (e) {
