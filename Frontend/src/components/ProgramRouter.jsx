@@ -84,7 +84,7 @@ function ProgramRouter() {
         <div className="flex-1 flex justify-center items-center pb-50">
           <PacmanLoader />
         </div>
-      ) : data.length > 0 ? (
+      ) : (
         <div className="flex flex-col p-4 md:p-8 lg:p-12 w-full max-w-full">
           <div className="card flex-1 flex flex-col min-h-0 w-full max-w-full">
             <div className="flex-1 min-h-0 w-full max-w-full overflow-x-auto">
@@ -99,6 +99,11 @@ function ProgramRouter() {
                 scrollable
                 scrollHeight="flex"
                 style={{ width: "100%", maxWidth: "100vw" }}
+                emptyMessage={
+                  <div className="text-center py-8 text-gray-500">
+                    No hay rutas registradas
+                  </div>
+                }
               >
                 <Column
                   field="fecha"
@@ -177,11 +182,6 @@ function ProgramRouter() {
               </DataTable>
             </div>
           </div>
-        </div>
-      ) : (
-        <div className="flex flex-1 flex-col w-full items-center justify-center pb-50">
-          <h1 className="text-4xl font-semibold">No hay datos</h1>
-          <DatabaseBackup size={64} />
         </div>
       )}
     </div>
