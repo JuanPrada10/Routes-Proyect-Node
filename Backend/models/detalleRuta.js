@@ -9,20 +9,20 @@ class DetalleRutaModelo {
   }
   async getAll() {
     return await DetalleRuta.find().populate({
-      path: 'id_ruta',
+      path: "id_ruta",
       populate: [
-        { path: 'conductor_id', model: 'conductores' },
-        { path: 'vehiculo_id', model: 'vehiculos' }
-      ]
+        { path: "conductor_id", model: "conductores" },
+        { path: "vehiculo_id", model: "vehiculos" },
+      ],
     });
   }
   async getById(id) {
     return await DetalleRuta.findById(id).populate({
-      path: 'id_ruta',
+      path: "id_ruta",
       populate: [
-        { path: 'conductor_id', model: 'conductores' },
-        { path: 'vehiculo_id', model: 'vehiculos' }
-      ]
+        { path: "conductor_id", model: "conductores" },
+        { path: "vehiculo_id", model: "vehiculos" },
+      ],
     });
   }
   async update(id, detalleRuta) {
@@ -35,6 +35,12 @@ class DetalleRutaModelo {
   async delete(id) {
     return await DetalleRuta.findOneAndDelete({
       _id: new mongoose.Types.ObjectId(id),
+    });
+  }
+  // Borra todos los detalles asociados a una ruta
+  async deleteManyByRuta(id_ruta) {
+    return await DetalleRuta.deleteMany({
+      id_ruta: new mongoose.Types.ObjectId(id_ruta),
     });
   }
 }
