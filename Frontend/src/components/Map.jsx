@@ -46,7 +46,16 @@ function Map() {
             package: item.numero_paquete,
             driverName: `${item.id_ruta.conductor_id.nombres} ${item.id_ruta.conductor_id.apellidos}`,
             vehicleDescription: `${item.id_ruta.vehiculo_id.marca} ${item.id_ruta.vehiculo_id.modelo}`,
-            vehiclePlate: item.id_ruta.vehiculo_id.placa
+            vehiclePlate: item.id_ruta.vehiculo_id.placa,
+            driverData: {
+              license: item.id_ruta.conductor_id.numero_licencia,
+              phone: item.id_ruta.conductor_id.telefono,
+              email: item.id_ruta.conductor_id.correo
+            },
+            vehicleData: {
+              capacity: item.id_ruta.vehiculo_id.capacidad_carga,
+              color: item.id_ruta.vehiculo_id.color
+            }
           });
 
           // Procesar conductores únicos
@@ -56,7 +65,8 @@ function Map() {
               id: item.id_ruta.conductor_id._id,
               name: `${item.id_ruta.conductor_id.nombres} ${item.id_ruta.conductor_id.apellidos}`,
               license: item.id_ruta.conductor_id.numero_licencia,
-              phone: item.id_ruta.conductor_id.telefono
+              phone: item.id_ruta.conductor_id.telefono,
+              email: item.id_ruta.conductor_id.correo
             });
           }
 
@@ -88,10 +98,30 @@ function Map() {
     fetchData();
   }, []);
 
-  // Obtener rutas filtradas por conductor seleccionado
-  const filteredRoutes = selectedDriver 
-    ? routes.filter(route => route.driverId === selectedDriver)
-    : routes;
+  // Obtener rutas filtradas según selección
+  const getFilteredRoutes = () => {
+    let filtered = routes;
+    
+    if (selectedDriver && selectedVehicle) {
+      filtered = routes.filter(route => 
+        route.driverId === selectedDriver && route.vehicleId === selectedVehicle
+      );
+    } else if (selectedDriver) {
+      filtered = routes.filter(route => route.driverId === selectedDriver);
+    } else if (selectedVehicle) {
+      filtered = routes.filter(route => route.vehicleId === selectedVehicle);
+    }
+    
+    return filtered;
+  };
+
+  const filteredRoutes = getFilteredRoutes();
+
+  // Obtener información del conductor seleccionado
+  const selectedDriverInfo = drivers.find(d => d.id === selectedDriver) || null;
+  
+  // Obtener información del vehículo seleccionado
+  const selectedVehicleInfo = vehicles.find(v => v.id === selectedVehicle) || null;
 
   // Componente para el botón de centrar en bodega
   const FlyToLocationButton = () => {
@@ -107,15 +137,18 @@ function Map() {
   };
 
   // Componente para los marcadores en el mapa
-  const DynamicMarkers = ({ routes, selectedDriver }) => {
+  const DynamicMarkers = ({ routes }) => {
     const map = useMap();
     
-    // Centrar en la primera ruta si hay un conductor seleccionado
+    // Centrar en las rutas filtradas
     useEffect(() => {
-      if (selectedDriver && routes.length > 0) {
-        map.flyTo(routes[0].location, 14);
+      if (routes.length > 0 && (selectedDriver || selectedVehicle)) {
+        const bounds = routes.map(route => route.location);
+        map.flyToBounds(bounds, { padding: [50, 50] });
+      } else if (!selectedDriver && !selectedVehicle) {
+        map.flyTo(warehouseLocation, 13);
       }
-    }, [selectedDriver, routes, map]);
+    }, [selectedDriver, selectedVehicle, routes, map]);
 
     return (
       <>
@@ -132,7 +165,7 @@ function Map() {
           <Marker 
             key={route.id} 
             position={route.location}
-            opacity={selectedDriver === route.driverId ? 1 : 0.6}
+            opacity={1}
           >
             <Popup>
               <div className="font-bold">{route.driverName}</div>
@@ -169,7 +202,7 @@ function Map() {
             <option value="">Todos los conductores</option>
             {drivers.map(driver => (
               <option key={driver.id} value={driver.id}>
-                {driver.name} ({driver.license})
+                {driver.name}
               </option>
             ))}
           </select>
@@ -198,6 +231,144 @@ function Map() {
     );
   };
 
+  // Componente para el panel de información
+  const InfoPanel = () => {
+    // Determinar el tipo de vista según las selecciones
+    const viewMode = selectedDriver && selectedVehicle 
+      ? 'combined' 
+      : selectedDriver 
+        ? 'driver' 
+        : selectedVehicle 
+          ? 'vehicle' 
+          : 'general';
+
+    return (
+      <div className="absolute bottom-5 left-5 bg-white bg-opacity-90 p-4 rounded-lg shadow-lg z-[1000] max-w-xs">
+        {/* Vista Combinada */}
+        {viewMode === 'combined' && (
+          <>
+            <h3 className="font-bold mb-2">Información Combinada</h3>
+            <div className="mb-3">
+              <h4 className="font-semibold">{selectedDriverInfo.name}</h4>
+              <p className="text-sm">Licencia: {selectedDriverInfo.license}</p>
+              <p className="text-sm">Teléfono: {selectedDriverInfo.phone}</p>
+            </div>
+            <div className="mb-3">
+              <h4 className="font-semibold">{selectedVehicleInfo.description}</h4>
+              <p className="text-sm">Placa: {selectedVehicleInfo.plate}</p>
+              <p className="text-sm">Capacidad: {selectedVehicleInfo.capacity} kg</p>
+            </div>
+            <div className="max-h-40 overflow-y-auto">
+              <h4 className="font-semibold mb-1">Rutas Asignadas ({filteredRoutes.length})</h4>
+              {filteredRoutes.length > 0 ? (
+                <ul className="space-y-2">
+                  {filteredRoutes.map(route => (
+                    <li key={route.id} className="border-b pb-2">
+                      <div className="font-medium">{route.package}</div>
+                      <div className="text-sm">{route.address}</div>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-gray-500">No hay rutas para esta combinación</p>
+              )}
+            </div>
+          </>
+        )}
+
+        {/* Vista solo Conductor */}
+        {viewMode === 'driver' && (
+          <>
+            <h3 className="font-bold mb-2">Información del Conductor</h3>
+            <div className="mb-3">
+              <h4 className="font-semibold">{selectedDriverInfo.name}</h4>
+              <p className="text-sm">Licencia: {selectedDriverInfo.license}</p>
+              <p className="text-sm">Teléfono: {selectedDriverInfo.phone}</p>
+              <p className="text-sm">Email: {selectedDriverInfo.email}</p>
+            </div>
+            <div className="max-h-40 overflow-y-auto">
+              <h4 className="font-semibold mb-1">Rutas Asignadas ({filteredRoutes.length})</h4>
+              {filteredRoutes.length > 0 ? (
+                <ul className="space-y-2">
+                  {filteredRoutes.map(route => (
+                    <li key={route.id} className="border-b pb-2">
+                      <div className="font-medium">{route.package}</div>
+                      <div className="text-sm">Vehículo: {route.vehicleDescription}</div>
+                      <div className="text-sm">{route.address}</div>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-gray-500">No hay rutas asignadas</p>
+              )}
+            </div>
+          </>
+        )}
+
+        {/* Vista solo Vehículo */}
+        {viewMode === 'vehicle' && (
+          <>
+            <h3 className="font-bold mb-2">Información del Vehículo</h3>
+            <div className="mb-3">
+              <h4 className="font-semibold">{selectedVehicleInfo.description}</h4>
+              <p className="text-sm">Placa: {selectedVehicleInfo.plate}</p>
+              <p className="text-sm">Color: {selectedVehicleInfo.color}</p>
+              <p className="text-sm">Capacidad: {selectedVehicleInfo.capacity} kg</p>
+            </div>
+            <div className="max-h-40 overflow-y-auto">
+              <h4 className="font-semibold mb-1">Rutas Asignadas ({filteredRoutes.length})</h4>
+              {filteredRoutes.length > 0 ? (
+                <ul className="space-y-2">
+                  {filteredRoutes.map(route => (
+                    <li key={route.id} className="border-b pb-2">
+                      <div className="font-medium">{route.package}</div>
+                      <div className="text-sm">Conductor: {route.driverName}</div>
+                      <div className="text-sm">{route.address}</div>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-gray-500">No hay rutas asignadas</p>
+              )}
+            </div>
+          </>
+        )}
+
+        {/* Vista General */}
+        {viewMode === 'general' && (
+          <>
+            <h3 className="font-bold mb-2">Resumen General</h3>
+            <div className="grid grid-cols-2 gap-2 mb-3">
+              <div>
+                <h4 className="font-semibold">Conductores</h4>
+                <p className="text-sm">{drivers.length} registrados</p>
+              </div>
+              <div>
+                <h4 className="font-semibold">Vehículos</h4>
+                <p className="text-sm">{vehicles.length} registrados</p>
+              </div>
+            </div>
+            <div className="max-h-40 overflow-y-auto">
+              <h4 className="font-semibold mb-1">Últimas Rutas ({routes.length})</h4>
+              {routes.length > 0 ? (
+                <ul className="space-y-2">
+                  {routes.slice(0, 5).map(route => (
+                    <li key={route.id} className="border-b pb-2">
+                      <div className="font-medium">{route.package}</div>
+                      <div className="text-sm">{route.driverName} - {route.vehicleDescription}</div>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-gray-500">No hay rutas registradas</p>
+              )}
+            </div>
+          </>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div className="relative h-screen w-full">
       <MapContainer
@@ -218,10 +389,7 @@ function Map() {
           onDriverChange={setSelectedDriver}
           onVehicleChange={setSelectedVehicle}
         />
-        <DynamicMarkers 
-          routes={filteredRoutes} 
-          selectedDriver={selectedDriver} 
-        />
+        <DynamicMarkers routes={filteredRoutes} />
       </MapContainer>
 
       {loading && (
@@ -236,28 +404,7 @@ function Map() {
         </div>
       )}
 
-      {/* Panel de información */}
-      <div className="absolute bottom-5 left-5 bg-white bg-opacity-90 p-4 rounded-lg shadow-lg z-[1000] max-w-xs">
-        <h3 className="font-bold mb-2">
-          {selectedDriver 
-            ? `Rutas de ${drivers.find(d => d.id === selectedDriver)?.name || 'conductor'}`
-            : 'Todas las rutas'}
-        </h3>
-        <div className="max-h-40 overflow-y-auto">
-          {filteredRoutes.length > 0 ? (
-            <ul className="space-y-2">
-              {filteredRoutes.map(route => (
-                <li key={route.id} className="border-b pb-2">
-                  <div className="font-medium">{route.package}</div>
-                  <div className="text-sm">{route.address}</div>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-gray-500">No hay rutas para mostrar</p>
-          )}
-        </div>
-      </div>
+      <InfoPanel />
     </div>
   );
 }
