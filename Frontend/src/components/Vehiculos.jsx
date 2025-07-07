@@ -84,7 +84,11 @@ function Vehiculos() {
             await fetchData();
           }}
         />
-        <SearchInput setModal={setModalOpen} modal={modalOpen} onSearch={setSearch} />
+        <SearchInput
+          setModal={setModalOpen}
+          modal={modalOpen}
+          onSearch={setSearch}
+        />
         {loading ? (
           <div className="flex-1 flex justify-center items-center pb-50">
             <PacmanLoader />

@@ -20,13 +20,9 @@ function SearchInput({ setModal, modal, onSearch }) {
           <input
             type="search"
             className="bg-white rounded-l-lg p-1 focus:outline-none w-70"
-<<<<<<< Updated upstream
-            placeholder="Buscar"
-=======
             placeholder="Buscar Por Placa ...."
             value={search}
             onChange={handleInput}
->>>>>>> Stashed changes
           />
           <button
             type="submit"
