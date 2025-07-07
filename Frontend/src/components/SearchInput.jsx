@@ -7,7 +7,7 @@ function SearchInput({ setModal, modal }) {
           <input
             type="search"
             className="bg-white rounded-l-lg p-1 focus:outline-none w-70"
-            placeholder="Buscar Por Placa ...."
+            placeholder="Buscar"
           />
           <div className="bg-slate-900 rounded-r-lg p-1 hover:bg-slate-800 transition-all duration-150 ">
             <Search color="white" />
