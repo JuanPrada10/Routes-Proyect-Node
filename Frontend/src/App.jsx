@@ -1,6 +1,6 @@
 import SideBar from "./components/SideBar";
 import Home from "./components/Home";
-
+import ProgramRouter from "./components/ProgramRouter";
 import Vehiculos from "./components/Vehiculos";
 
 import Map from "./components/Map";
@@ -26,11 +26,7 @@ function App() {
           <Route path="/vehiculos" element={<Vehiculos />} />
           <Route
             path="/programar"
-            element={
-              <>
-                <h1> Aqui componente Programar Ruta</h1>
-              </>
-            }
+            element={<ProgramRouter />}
           />
           <Route path="/mapa" element={<Map></Map>} />
         </Routes>
