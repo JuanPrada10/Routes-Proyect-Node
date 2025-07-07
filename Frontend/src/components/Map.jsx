@@ -1,18 +1,24 @@
-import 'leaflet/dist/leaflet.css';
-import { useState, useEffect } from 'react';
-import { LocateFixed, Car, UserRound, Loader2, ChevronDown, ChevronUp } from 'lucide-react';
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
+import "leaflet/dist/leaflet.css";
+import { useState, useEffect } from "react";
+import {
+  LocateFixed,
+  Car,
+  UserRound,
+  Loader2,
+  ChevronDown,
+  ChevronUp,
+} from "lucide-react";
+import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 
 function Map() {
-  const [selectedDriver, setSelectedDriver] = useState('');
-  const [selectedVehicle, setSelectedVehicle] = useState('');
+  const [selectedDriver, setSelectedDriver] = useState("");
+  const [selectedVehicle, setSelectedVehicle] = useState("");
   const [drivers, setDrivers] = useState([]);
   const [vehicles, setVehicles] = useState([]);
   const [routes, setRoutes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Ubicación de la bodega principal
   const warehouseLocation = [4.757786586246297, -74.04488664305592];
 
   useEffect(() => {
@@ -20,11 +26,11 @@ function Map() {
       try {
         setLoading(true);
         const response = await fetch("http://localhost:5100/api/detalleRuta");
-        
+
         if (!response.ok) {
           throw new Error(`Error HTTP: ${response.status}`);
         }
-        
+
         const apiData = await response.json();
         console.log("Datos API recibidos:", apiData);
 
@@ -34,8 +40,8 @@ function Map() {
         const uniqueVehicles = [];
         // Almacenar todas las rutas
         const allRoutes = [];
-        
-        apiData.forEach(item => {
+
+        apiData.forEach((item) => {
           // Guardar todas las rutas
           allRoutes.push({
             id: item._id,
@@ -50,35 +56,39 @@ function Map() {
             driverData: {
               license: item.id_ruta.conductor_id.numero_licencia,
               phone: item.id_ruta.conductor_id.telefono,
-              email: item.id_ruta.conductor_id.correo
+              email: item.id_ruta.conductor_id.correo,
             },
             vehicleData: {
               capacity: item.id_ruta.vehiculo_id.capacidad_carga,
-              color: item.id_ruta.vehiculo_id.color
-            }
+              color: item.id_ruta.vehiculo_id.color,
+            },
           });
 
           // Procesar conductores únicos
-          const driverExists = uniqueDrivers.some(d => d.id === item.id_ruta.conductor_id._id);
+          const driverExists = uniqueDrivers.some(
+            (d) => d.id === item.id_ruta.conductor_id._id
+          );
           if (!driverExists) {
             uniqueDrivers.push({
               id: item.id_ruta.conductor_id._id,
               name: `${item.id_ruta.conductor_id.nombres} ${item.id_ruta.conductor_id.apellidos}`,
               license: item.id_ruta.conductor_id.numero_licencia,
               phone: item.id_ruta.conductor_id.telefono,
-              email: item.id_ruta.conductor_id.correo
+              email: item.id_ruta.conductor_id.correo,
             });
           }
 
           // Procesar vehículos únicos
-          const vehicleExists = uniqueVehicles.some(v => v.id === item.id_ruta.vehiculo_id._id);
+          const vehicleExists = uniqueVehicles.some(
+            (v) => v.id === item.id_ruta.vehiculo_id._id
+          );
           if (!vehicleExists) {
             uniqueVehicles.push({
               id: item.id_ruta.vehiculo_id._id,
               description: `${item.id_ruta.vehiculo_id.marca} ${item.id_ruta.vehiculo_id.modelo}`,
               plate: item.id_ruta.vehiculo_id.placa,
               capacity: item.id_ruta.vehiculo_id.capacidad_carga,
-              color: item.id_ruta.vehiculo_id.color
+              color: item.id_ruta.vehiculo_id.color,
             });
           }
         });
@@ -86,7 +96,6 @@ function Map() {
         setDrivers(uniqueDrivers);
         setVehicles(uniqueVehicles);
         setRoutes(allRoutes);
-        
       } catch (err) {
         setError(err.message);
         console.error("Error al obtener datos:", err);
@@ -101,27 +110,31 @@ function Map() {
   // Obtener rutas filtradas según selección
   const getFilteredRoutes = () => {
     let filtered = routes;
-    
+
     if (selectedDriver && selectedVehicle) {
-      filtered = routes.filter(route => 
-        route.driverId === selectedDriver && route.vehicleId === selectedVehicle
+      filtered = routes.filter(
+        (route) =>
+          route.driverId === selectedDriver &&
+          route.vehicleId === selectedVehicle
       );
     } else if (selectedDriver) {
-      filtered = routes.filter(route => route.driverId === selectedDriver);
+      filtered = routes.filter((route) => route.driverId === selectedDriver);
     } else if (selectedVehicle) {
-      filtered = routes.filter(route => route.vehicleId === selectedVehicle);
+      filtered = routes.filter((route) => route.vehicleId === selectedVehicle);
     }
-    
+
     return filtered;
   };
 
   const filteredRoutes = getFilteredRoutes();
 
   // Obtener información del conductor seleccionado
-  const selectedDriverInfo = drivers.find(d => d.id === selectedDriver) || null;
-  
+  const selectedDriverInfo =
+    drivers.find((d) => d.id === selectedDriver) || null;
+
   // Obtener información del vehículo seleccionado
-  const selectedVehicleInfo = vehicles.find(v => v.id === selectedVehicle) || null;
+  const selectedVehicleInfo =
+    vehicles.find((v) => v.id === selectedVehicle) || null;
 
   // Componente para el botón de centrar en bodega
   const FlyToLocationButton = () => {
@@ -139,11 +152,11 @@ function Map() {
   // Componente para los marcadores en el mapa
   const DynamicMarkers = ({ routes }) => {
     const map = useMap();
-    
+
     // Centrar en las rutas filtradas
     useEffect(() => {
       if (routes.length > 0 && (selectedDriver || selectedVehicle)) {
-        const bounds = routes.map(route => route.location);
+        const bounds = routes.map((route) => route.location);
         map.flyToBounds(bounds, { padding: [50, 50] });
       } else if (!selectedDriver && !selectedVehicle) {
         map.flyTo(warehouseLocation, 13);
@@ -161,15 +174,13 @@ function Map() {
         </Marker>
 
         {/* Marcadores de rutas */}
-        {routes.map(route => (
-          <Marker 
-            key={route.id} 
-            position={route.location}
-            opacity={1}
-          >
+        {routes.map((route) => (
+          <Marker key={route.id} position={route.location} opacity={1}>
             <Popup>
               <div className="font-bold">{route.driverName}</div>
-              <div>Vehículo: {route.vehicleDescription} ({route.vehiclePlate})</div>
+              <div>
+                Vehículo: {route.vehicleDescription} ({route.vehiclePlate})
+              </div>
               <div>Paquete: {route.package}</div>
               <div className="text-sm mt-1">{route.address}</div>
             </Popup>
@@ -180,11 +191,11 @@ function Map() {
   };
 
   // Componente para los controles de selección
-  const SelectControls = ({ 
-    drivers, 
+  const SelectControls = ({
+    drivers,
     vehicles,
     onDriverChange,
-    onVehicleChange
+    onVehicleChange,
   }) => {
     return (
       <div className="absolute top-5 right-5 z-[1100] flex gap-4">
@@ -200,7 +211,7 @@ function Map() {
             className="w-full h-10 pl-14 pr-4 rounded-lg bg-white text-black shadow-md focus:outline-none"
           >
             <option value="">Todos los conductores</option>
-            {drivers.map(driver => (
+            {drivers.map((driver) => (
               <option key={driver.id} value={driver.id}>
                 {driver.name}
               </option>
@@ -220,7 +231,7 @@ function Map() {
             className="w-full h-10 pl-14 pr-4 rounded-lg bg-white text-black shadow-md focus:outline-none"
           >
             <option value="">Todos los vehículos</option>
-            {vehicles.map(vehicle => (
+            {vehicles.map((vehicle) => (
               <option key={vehicle.id} value={vehicle.id}>
                 {vehicle.description} ({vehicle.plate})
               </option>
@@ -234,46 +245,50 @@ function Map() {
   // Componente para el panel de información expandible
   const InfoPanel = () => {
     const [expanded, setExpanded] = useState(false);
-    const [viewMode, setViewMode] = useState('general'); // 'general', 'driver', 'vehicle', 'combined'
-    
+    const [viewMode, setViewMode] = useState("general"); // 'general', 'driver', 'vehicle', 'combined'
+
     // Determinar el modo de vista basado en las selecciones
     useEffect(() => {
       if (selectedDriver && selectedVehicle) {
-        setViewMode('combined');
+        setViewMode("combined");
       } else if (selectedDriver) {
-        setViewMode('driver');
+        setViewMode("driver");
       } else if (selectedVehicle) {
-        setViewMode('vehicle');
+        setViewMode("vehicle");
       } else {
-        setViewMode('general');
+        setViewMode("general");
       }
     }, [selectedDriver, selectedVehicle]);
 
     // Contenido compacto (vista previa)
     const renderCompactContent = () => {
-      switch(viewMode) {
-        case 'combined':
+      switch (viewMode) {
+        case "combined":
           return (
             <>
               <h3 className="font-bold mb-2">Combinación Seleccionada</h3>
-              <p className="text-sm">{selectedDriverInfo?.name || 'N/A'}</p>
-              <p className="text-sm">{selectedVehicleInfo?.description || 'N/A'}</p>
+              <p className="text-sm">{selectedDriverInfo?.name || "N/A"}</p>
+              <p className="text-sm">
+                {selectedVehicleInfo?.description || "N/A"}
+              </p>
               <p className="text-sm">{filteredRoutes.length} rutas asignadas</p>
             </>
           );
-        case 'driver':
+        case "driver":
           return (
             <>
               <h3 className="font-bold mb-2">Conductor Seleccionado</h3>
-              <p className="text-sm">{selectedDriverInfo?.name || 'N/A'}</p>
+              <p className="text-sm">{selectedDriverInfo?.name || "N/A"}</p>
               <p className="text-sm">{filteredRoutes.length} rutas asignadas</p>
             </>
           );
-        case 'vehicle':
+        case "vehicle":
           return (
             <>
               <h3 className="font-bold mb-2">Vehículo Seleccionado</h3>
-              <p className="text-sm">{selectedVehicleInfo?.description || 'N/A'}</p>
+              <p className="text-sm">
+                {selectedVehicleInfo?.description || "N/A"}
+              </p>
               <p className="text-sm">{filteredRoutes.length} rutas asignadas</p>
             </>
           );
@@ -299,26 +314,40 @@ function Map() {
 
     // Contenido expandido (detalle completo)
     const renderExpandedContent = () => {
-      switch(viewMode) {
-        case 'combined':
+      switch (viewMode) {
+        case "combined":
           return (
             <>
               <h3 className="font-bold mb-2">Información Combinada</h3>
               <div className="mb-3">
-                <h4 className="font-semibold">{selectedDriverInfo?.name || 'N/A'}</h4>
-                <p className="text-sm">Licencia: {selectedDriverInfo?.license || 'N/A'}</p>
-                <p className="text-sm">Teléfono: {selectedDriverInfo?.phone || 'N/A'}</p>
+                <h4 className="font-semibold">
+                  {selectedDriverInfo?.name || "N/A"}
+                </h4>
+                <p className="text-sm">
+                  Licencia: {selectedDriverInfo?.license || "N/A"}
+                </p>
+                <p className="text-sm">
+                  Teléfono: {selectedDriverInfo?.phone || "N/A"}
+                </p>
               </div>
               <div className="mb-3">
-                <h4 className="font-semibold">{selectedVehicleInfo?.description || 'N/A'}</h4>
-                <p className="text-sm">Placa: {selectedVehicleInfo?.plate || 'N/A'}</p>
-                <p className="text-sm">Capacidad: {selectedVehicleInfo?.capacity || 'N/A'} kg</p>
+                <h4 className="font-semibold">
+                  {selectedVehicleInfo?.description || "N/A"}
+                </h4>
+                <p className="text-sm">
+                  Placa: {selectedVehicleInfo?.plate || "N/A"}
+                </p>
+                <p className="text-sm">
+                  Capacidad: {selectedVehicleInfo?.capacity || "N/A"} kg
+                </p>
               </div>
               <div className="max-h-60 overflow-y-auto">
-                <h4 className="font-semibold mb-1">Rutas Asignadas ({filteredRoutes.length})</h4>
+                <h4 className="font-semibold mb-1">
+                  Rutas Asignadas ({filteredRoutes.length})
+                </h4>
                 {filteredRoutes.length > 0 ? (
                   <ul className="space-y-2">
-                    {filteredRoutes.map(route => (
+                    {filteredRoutes.map((route) => (
                       <li key={route.id} className="border-b pb-2">
                         <div className="font-medium">{route.package}</div>
                         <div className="text-sm">{route.address}</div>
@@ -326,29 +355,43 @@ function Map() {
                     ))}
                   </ul>
                 ) : (
-                  <p className="text-gray-500">No hay rutas para esta combinación</p>
+                  <p className="text-gray-500">
+                    No hay rutas para esta combinación
+                  </p>
                 )}
               </div>
             </>
           );
-        case 'driver':
+        case "driver":
           return (
             <>
               <h3 className="font-bold mb-2">Información del Conductor</h3>
               <div className="mb-3">
-                <h4 className="font-semibold">{selectedDriverInfo?.name || 'N/A'}</h4>
-                <p className="text-sm">Licencia: {selectedDriverInfo?.license || 'N/A'}</p>
-                <p className="text-sm">Teléfono: {selectedDriverInfo?.phone || 'N/A'}</p>
-                <p className="text-sm">Email: {selectedDriverInfo?.email || 'N/A'}</p>
+                <h4 className="font-semibold">
+                  {selectedDriverInfo?.name || "N/A"}
+                </h4>
+                <p className="text-sm">
+                  Licencia: {selectedDriverInfo?.license || "N/A"}
+                </p>
+                <p className="text-sm">
+                  Teléfono: {selectedDriverInfo?.phone || "N/A"}
+                </p>
+                <p className="text-sm">
+                  Email: {selectedDriverInfo?.email || "N/A"}
+                </p>
               </div>
               <div className="max-h-60 overflow-y-auto">
-                <h4 className="font-semibold mb-1">Rutas Asignadas ({filteredRoutes.length})</h4>
+                <h4 className="font-semibold mb-1">
+                  Rutas Asignadas ({filteredRoutes.length})
+                </h4>
                 {filteredRoutes.length > 0 ? (
                   <ul className="space-y-2">
-                    {filteredRoutes.map(route => (
+                    {filteredRoutes.map((route) => (
                       <li key={route.id} className="border-b pb-2">
                         <div className="font-medium">{route.package}</div>
-                        <div className="text-sm">Vehículo: {route.vehicleDescription}</div>
+                        <div className="text-sm">
+                          Vehículo: {route.vehicleDescription}
+                        </div>
                         <div className="text-sm">{route.address}</div>
                       </li>
                     ))}
@@ -359,24 +402,36 @@ function Map() {
               </div>
             </>
           );
-        case 'vehicle':
+        case "vehicle":
           return (
             <>
               <h3 className="font-bold mb-2">Información del Vehículo</h3>
               <div className="mb-3">
-                <h4 className="font-semibold">{selectedVehicleInfo?.description || 'N/A'}</h4>
-                <p className="text-sm">Placa: {selectedVehicleInfo?.plate || 'N/A'}</p>
-                <p className="text-sm">Color: {selectedVehicleInfo?.color || 'N/A'}</p>
-                <p className="text-sm">Capacidad: {selectedVehicleInfo?.capacity || 'N/A'} kg</p>
+                <h4 className="font-semibold">
+                  {selectedVehicleInfo?.description || "N/A"}
+                </h4>
+                <p className="text-sm">
+                  Placa: {selectedVehicleInfo?.plate || "N/A"}
+                </p>
+                <p className="text-sm">
+                  Color: {selectedVehicleInfo?.color || "N/A"}
+                </p>
+                <p className="text-sm">
+                  Capacidad: {selectedVehicleInfo?.capacity || "N/A"} kg
+                </p>
               </div>
               <div className="max-h-60 overflow-y-auto">
-                <h4 className="font-semibold mb-1">Rutas Asignadas ({filteredRoutes.length})</h4>
+                <h4 className="font-semibold mb-1">
+                  Rutas Asignadas ({filteredRoutes.length})
+                </h4>
                 {filteredRoutes.length > 0 ? (
                   <ul className="space-y-2">
-                    {filteredRoutes.map(route => (
+                    {filteredRoutes.map((route) => (
                       <li key={route.id} className="border-b pb-2">
                         <div className="font-medium">{route.package}</div>
-                        <div className="text-sm">Conductor: {route.driverName}</div>
+                        <div className="text-sm">
+                          Conductor: {route.driverName}
+                        </div>
                         <div className="text-sm">{route.address}</div>
                       </li>
                     ))}
@@ -402,14 +457,20 @@ function Map() {
                 </div>
               </div>
               <div className="max-h-60 overflow-y-auto">
-                <h4 className="font-semibold mb-1">Últimas Rutas ({routes.length})</h4>
+                <h4 className="font-semibold mb-1">
+                  Últimas Rutas ({routes.length})
+                </h4>
                 {routes.length > 0 ? (
                   <ul className="space-y-2">
-                    {routes.slice(0, 5).map(route => (
+                    {routes.slice(0, 5).map((route) => (
                       <li key={route.id} className="border-b pb-2">
                         <div className="font-medium">{route.package}</div>
-                        <div className="text-sm">{route.driverName} - {route.vehicleDescription}</div>
-                        <div className="text-sm text-gray-500 truncate">{route.address}</div>
+                        <div className="text-sm">
+                          {route.driverName} - {route.vehicleDescription}
+                        </div>
+                        <div className="text-sm text-gray-500 truncate">
+                          {route.address}
+                        </div>
                       </li>
                     ))}
                   </ul>
@@ -423,18 +484,22 @@ function Map() {
     };
 
     return (
-      <div className={`absolute bottom-5 left-5 bg-white bg-opacity-90 rounded-lg shadow-lg z-[1000] transition-all duration-300 ${expanded ? 'w-80 max-h-[70vh]' : 'w-64 max-h-40'}`}>
+      <div
+        className={`absolute bottom-5 left-5 bg-white bg-opacity-90 rounded-lg shadow-lg z-[1000] transition-all duration-300 ${
+          expanded ? "w-80 max-h-[70vh]" : "w-64 max-h-40"
+        }`}
+      >
         <div className="p-4">
           {/* Contenido principal */}
-          <div className={expanded ? 'hidden' : 'block'}>
+          <div className={expanded ? "hidden" : "block"}>
             {renderCompactContent()}
           </div>
-          
+
           {/* Contenido expandido */}
-          <div className={expanded ? 'block' : 'hidden'}>
+          <div className={expanded ? "block" : "hidden"}>
             {renderExpandedContent()}
           </div>
-          
+
           {/* Botón para expandir/contraer */}
           <button
             onClick={() => setExpanded(!expanded)}
@@ -469,7 +534,7 @@ function Map() {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        
+
         <FlyToLocationButton />
         <SelectControls
           drivers={drivers}

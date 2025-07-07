@@ -7,13 +7,17 @@ const rutaSchema = new mongoose.Schema({
   },
   conductor_id: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "conductores", // nombre exacto del modelo
+    ref: "conductores",
     required: true,
   },
   vehiculo_id: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "vehiculos", // este modelo debe usar _id (más abajo te muestro cómo)
+    ref: "vehiculos",
     required: true,
+  },
+  activo: {
+    type: Boolean,
+    default: true,
   },
 });
 
