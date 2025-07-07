@@ -329,7 +329,6 @@ components:
   schemas:
     Vehiculo:
       type: object
-      required: [placa, modelo, color, marca, capacidad_carga]
       properties:
         placa:
           type: string
@@ -340,10 +339,9 @@ components:
         marca:
           type: string
         capacidad_carga:
-          type: number
+          type: integer
     Conductor:
       type: object
-      required: [nombres, apellidos, numero_licencia, telefono, correo]
       properties:
         _id:
           type: string
@@ -351,38 +349,27 @@ components:
           type: string
         apellidos:
           type: string
-        numero_licencia:
-          type: string
         telefono:
-          type: string
-        correo:
           type: string
     Ruta:
       type: object
-      required: [fecha, conductor_id, vehiculo_id]
       properties:
         _id:
           type: string
         fecha:
           type: string
-          format: date
         conductor_id:
-          type: string
+          $ref: "#/components/schemas/Conductor"
         vehiculo_id:
-          type: string
+          $ref: "#/components/schemas/Vehiculo"
     DetalleRuta:
       type: object
-      required: [id_ruta, latitud, longitud, direccion, numero_paquete]
       properties:
         _id:
           type: string
-        id_ruta:
-          type: string
-        latitud:
-          type: number
-        longitud:
-          type: number
+        ruta_id:
+          $ref: "#/components/schemas/Ruta"
         direccion:
           type: string
-        numero_paquete:
-          type: string
+        entregado:
+          type: boolean

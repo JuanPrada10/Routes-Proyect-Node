@@ -9,26 +9,36 @@ function SideBar() {
         </div>
 
         <ul className="flex flex-col text-xl font-semibold gap-4 p-4 mt-10">
-          <li className="flex gap-2 items-center p-2 rounded-xl  hover:bg-white/10 hover:scale-105 transition duration-150 ">
-            <House />
-            <Link to="/">Home</Link>
-          </li>
-          <li className="flex gap-2 items-center p-2 rounded-xl hover:scale-105 hover:bg-white/10 transition duration-150">
-            <Car />
-            <Link to="/Vehiculos">Vehiculos</Link>
-          </li>
-          <li className="flex gap-2 items-center p-2 rounded-xl hover:scale-105 hover:bg-white/10 transition duration-150">
-            <SquareUser />
-            <Link to="/Conductores">Conductores</Link>
-          </li>
-          <li className="flex gap-2 items-center p-2 rounded-xl hover:scale-105 hover:bg-white/10 transition duration-150">
-            <LocationEdit />
-            <Link to="/Programar">Programar Ruta</Link>
-          </li>
-          <li className="flex gap-2 items-center p-2 rounded-xl hover:scale-105 hover:bg-white/10 transition duration-150">
-            <MapPinned />
-            <Link to="/Mapa">Ver Mapa</Link>
-          </li>
+          <Link to="/">
+            <li className="flex gap-2 items-center p-2 rounded-xl  hover:bg-white/10 hover:scale-105 transition duration-150 ">
+              <House />
+              Home
+            </li>
+          </Link>
+          <Link to="/Vehiculos">
+            <li className="flex gap-2 items-center p-2 rounded-xl hover:scale-105 hover:bg-white/10 transition duration-150">
+              <Car />
+              Vehiculos
+            </li>
+          </Link>
+          <Link to="/Conductores">
+            <li className="flex gap-2 items-center p-2 rounded-xl hover:scale-105 hover:bg-white/10 transition duration-150">
+              <SquareUser />
+              Conductores
+            </li>
+          </Link>
+          <Link to="/Programar">
+            <li className="flex gap-2 items-center p-2 rounded-xl hover:scale-105 hover:bg-white/10 transition duration-150">
+              <LocationEdit />
+              Programar Ruta
+            </li>
+          </Link>
+          <Link to="/Mapa">
+            <li className="flex gap-2 items-center p-2 rounded-xl hover:scale-105 hover:bg-white/10 transition duration-150">
+              <MapPinned />
+              Ver Mapa
+            </li>
+          </Link>
         </ul>
       </nav>
     </>

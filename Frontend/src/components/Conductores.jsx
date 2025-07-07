@@ -1,22 +1,22 @@
 import Card from "./Card";
-import logo from "../assets/car.svg";
+import logo from "../assets/user.svg";
 import SearchInput from "./SearchInput";
 import { DatabaseBackup } from "lucide-react";
 import { useState, useEffect } from "react";
 import { PacmanLoader } from "react-spinners";
 import Modal from "./Modal";
 import Details from "./Details";
-function Vehiculos() {
+function Conductores() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
-  const [vehiculoEditar, setVehiculoEditar] = useState(null);
+  const [conductorEditar, setConductorEditar] = useState(null);
   const [search, setSearch] = useState("");
 
   const fetchData = async () => {
     try {
       setLoading(true);
-      const result = await fetch("http://localhost:5100/api/vehiculos");
+      const result = await fetch("http://localhost:5100/api/conductores");
       const json = await result.json();
       setData(json);
     } catch (error) {
@@ -30,41 +30,44 @@ function Vehiculos() {
     fetchData();
   }, []);
 
-  const filteredData = data.filter((car) =>
-    car.placa.toLowerCase().includes(search.toLowerCase())
+  const filteredData = data.filter(
+    (user) =>
+      user.nombres.toLowerCase().includes(search.toLowerCase()) ||
+      user.apellidos.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
     <>
       <div className="flex flex-col min-h-screen relative">
         <Modal
-          isOpen={modalOpen || !!vehiculoEditar}
+          isOpen={modalOpen || !!conductorEditar}
           onClose={() => {
             setModalOpen(false);
-            setVehiculoEditar(null);
+            setConductorEditar(null);
           }}
-          title={vehiculoEditar ? "Actualizar Vehículo" : "Registrar Vehículo"}
-          initialData={vehiculoEditar}
+          title={
+            conductorEditar ? "Actualizar Conductor" : "Registrar Conductor"
+          }
+          initialData={conductorEditar}
           fields={[
+            { label: "Nombres", name: "nombres", type: "text" },
+            { label: "Apellidos", name: "apellidos", type: "text" },
+            { label: "Telefono", name: "telefono", type: "text" },
             {
-              label: "Placa",
-              name: "placa",
+              label: "Numero de Licencia",
+              name: "numero_licencia",
               type: "text",
-              disabled: !!vehiculoEditar,
             },
-            { label: "Color", name: "color", type: "text" },
-            { label: "Modelo", name: "modelo", type: "text" },
-            { label: "Marca", name: "marca", type: "text" },
             {
-              label: "Capacidad de Carga",
-              name: "capacidad_carga",
-              type: "number",
+              label: "Correo",
+              name: "correo",
+              type: "text",
             },
           ]}
           onSubmit={async (formData) => {
-            if (vehiculoEditar) {
+            if (conductorEditar) {
               await fetch(
-                `http://localhost:5100/api/vehiculos/${formData.placa}`,
+                `http://localhost:5100/api/conductores/${formData._id}`,
                 {
                   method: "PUT",
                   headers: { "Content-Type": "application/json" },
@@ -72,7 +75,7 @@ function Vehiculos() {
                 }
               );
             } else {
-              await fetch("http://localhost:5100/api/vehiculos", {
+              await fetch("http://localhost:5100/api/conductores", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formData),
@@ -92,15 +95,15 @@ function Vehiculos() {
           </div>
         ) : filteredData.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-4 md:p-8 lg:p-12">
-            {filteredData?.map((car) => (
+            {filteredData?.map((user) => (
               <Card
-                key={car._id}
+                key={user._id}
                 logo={logo}
-                onEdit={() => setVehiculoEditar(car)}
+                onEdit={() => setConductorEditar(user)}
                 onDelete={async () => {
                   try {
                     const response = await fetch(
-                      `http://localhost:5100/api/vehiculos/${car.placa}`,
+                      `http://localhost:5100/api/conductores/${user._id}`,
                       {
                         method: "DELETE",
                         headers: {
@@ -116,11 +119,14 @@ function Vehiculos() {
                 }}
               >
                 <>
-                  <Details property="Placa" value={car.placa} />
-                  <Details property="Modelo" value={car.modelo} />
-                  <Details property="Color" value={car.color} />
-                  <Details property="Marca" value={car.marca} />
-                  <Details property="Capacidad" value={car.capacidad_carga} />
+                  <Details property="Nombre" value={user.nombres} />
+                  <Details property="Apellido" value={user.apellidos} />
+                  <Details property="Telefono" value={user.telefono} />
+                  <Details property="Correo" value={user.correo} />
+                  <Details
+                    property="Numero de licencia"
+                    value={user.numero_licencia}
+                  />
                 </>
               </Card>
             ))}
@@ -136,4 +142,4 @@ function Vehiculos() {
   );
 }
 
-export default Vehiculos;
+export default Conductores;

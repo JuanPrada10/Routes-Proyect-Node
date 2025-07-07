@@ -35,9 +35,11 @@ function Modal({
   if (!isOpen) return null;
 
   return (
-    <div className="absolute bottom-0 top-0 left-0 right-0 bg-black/50 bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white h-auto w-120 rounded-xl p-8">
-        <h1 className="text-3xl font-bold text-center mb-8">{title}</h1>
+    <div className="fixed inset-0 bg-black/50 bg-opacity-50 flex items-center justify-center z-50 p-2 sm:p-4">
+      <div className="bg-white w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg rounded-xl p-4 sm:p-8 shadow-2xl transition-all duration-200">
+        <h1 className="text-2xl sm:text-3xl font-bold text-center mb-6 sm:mb-8">
+          {title}
+        </h1>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           {fields.map((field) => (
             <label
@@ -58,17 +60,17 @@ function Modal({
               />
             </label>
           ))}
-          <div className="flex justify-evenly mt-6">
+          <div className="flex flex-col sm:flex-row justify-evenly gap-2 sm:gap-6 mt-4 sm:mt-6">
             <button
               type="button"
               onClick={onClose}
-              className="bg-red-600 p-2 rounded-sm text-white hover:bg-red-700 transition-all duration-150 shadow-xl"
+              className="bg-red-600 p-2 rounded-sm text-white hover:bg-red-700 transition-all duration-150 shadow-xl w-full sm:w-auto"
             >
               Cancelar
             </button>
             <button
               type="submit"
-              className="bg-green-600 p-2 rounded-sm text-white hover:bg-green-700 transition-all duration-150"
+              className="bg-green-600 p-2 rounded-sm text-white hover:bg-green-700 transition-all duration-150 w-full sm:w-auto"
             >
               {isLoading ? (
                 <ClipLoader />

@@ -7,12 +7,6 @@ const options = {
       title: "Routes-API",
       version: "1.0.0",
       description: "API para la gestion de pedidos",
-      servers: [
-        {
-          url: "http://localhost:5100/api-docs",
-          description: "Local server",
-        },
-      ],
     },
   },
   apis: ["./swagger/*.yml"],
