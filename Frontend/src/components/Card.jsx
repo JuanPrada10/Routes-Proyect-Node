@@ -7,7 +7,7 @@ function Card({ logo, children, onEdit, onDelete }) {
     }
   };
   return (
-    <div className="bg-white w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg h-auto rounded-2xl shadow-lg overflow-hidden m-auto transition-all duration-200">
+    <div className="bg-white w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg h-[420px] sm:h-[440px] md:h-[460px] rounded-2xl shadow-lg overflow-hidden m-auto flex flex-col transition-all duration-200">
       <div className="flex flex-col justify-center items-center">
         <div className="w-full flex justify-between px-3">
           <button
@@ -31,7 +31,7 @@ function Card({ logo, children, onEdit, onDelete }) {
           />
         </div>
       </div>
-      <div className="flex flex-col gap-4 justify-start p-4 sm:p-6">
+      <div className="flex flex-col gap-4 justify-start p-4 sm:p-6 flex-1">
         {children}
       </div>
     </div>
