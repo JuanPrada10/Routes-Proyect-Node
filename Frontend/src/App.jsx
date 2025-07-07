@@ -5,6 +5,7 @@ import Vehiculos from "./components/Vehiculos";
 import Map from "./components/Map";
 import { Routes, Route } from "react-router-dom";
 import Conductores from "./components/Conductores";
+import RutaForm from "./components/RutaForm";
 
 function App() {
   return (
@@ -18,6 +19,8 @@ function App() {
           <Route path="/conductores" element={<Conductores />} />
           <Route path="/vehiculos" element={<Vehiculos />} />
           <Route path="/programar" element={<ProgramRouter />} />
+          <Route path="/programar-ruta" element={<RutaForm />} />
+          <Route path="/programar-ruta/:id" element={<RutaForm />} />
           <Route path="/mapa" element={<Map></Map>} />
         </Routes>
       </section>
