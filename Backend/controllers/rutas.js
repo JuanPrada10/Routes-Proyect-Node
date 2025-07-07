@@ -56,7 +56,10 @@ class rutasController {
   async delete(req, res) {
     try {
       const { id } = req.params;
+      // Borrado lógico de la ruta
       const data = await rutasModelo.delete(id);
+      // Eliminar todos los detalles asociados a la ruta
+      await detalleRutaModelo.deleteManyByRuta(id);
       res.status(206).json(data);
     } catch (e) {
       res.status(500).send(e);
