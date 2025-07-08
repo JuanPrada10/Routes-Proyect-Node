@@ -3,19 +3,19 @@ import detalleRutaModelo from "../models/detalleRuta.js";
 import mongoose from "mongoose";
 class rutasController {
   constructor() {}
-  // Método especial para crear ruta y detalles en un solo paso
+
   async programarRuta(req, res) {
     const session = await mongoose.startSession();
     session.startTransaction();
     try {
       const { conductor_id, vehiculo_id, fecha, detalles } = req.body;
-      // Crear la ruta principal
+
       const ruta = await rutasModelo.create({
         conductor_id,
         vehiculo_id,
         fecha,
       });
-      // Crear los detalles asociados
+
       const detallesDocs = await Promise.all(
         detalles.map((d) =>
           detalleRutaModelo.create({
@@ -47,8 +47,47 @@ class rutasController {
   async update(req, res) {
     try {
       const { id } = req.params;
-      const data = await rutasModelo.update(id, req.body);
-      res.status(200).json({ status: " actualizado" });
+      const { conductor_id, vehiculo_id, fecha, detalles } = req.body;
+
+      await rutasModelo.update(id, { conductor_id, vehiculo_id, fecha });
+
+      const detallesActuales = await detalleRutaModelo.getAll();
+      const detallesDeRuta = detallesActuales.filter(
+        (d) => d.id_ruta && d.id_ruta._id.toString() === id
+      );
+      const detallesIdsEnviado = detalles.filter((d) => d._id);
+
+      await Promise.all(
+        detalles.map(async (d) => {
+          if (d._id) {
+            await detalleRutaModelo.update(d._id, {
+              direccion: d.direccion,
+              latitud: d.lat,
+              longitud: d.lng,
+              numero_paquete: d.paquete,
+            });
+          } else {
+            await detalleRutaModelo.create({
+              id_ruta: id,
+              direccion: d.direccion,
+              latitud: d.lat,
+              longitud: d.lng,
+              numero_paquete: d.paquete,
+            });
+          }
+        })
+      );
+
+      const idsEnviados = detalles
+        .filter((d) => d._id)
+        .map((d) => d._id.toString());
+      await Promise.all(
+        detallesDeRuta
+          .filter((d) => !idsEnviados.includes(d._id.toString()))
+          .map((d) => detalleRutaModelo.delete(d._id))
+      );
+
+      res.status(200).json({ status: "Ruta y detalles actualizados" });
     } catch (e) {
       res.status(500).send(e);
     }
@@ -56,9 +95,9 @@ class rutasController {
   async delete(req, res) {
     try {
       const { id } = req.params;
-      // Borrado lógico de la ruta
+
       const data = await rutasModelo.delete(id);
-      // Eliminar todos los detalles asociados a la ruta
+
       await detalleRutaModelo.deleteManyByRuta(id);
       res.status(206).json(data);
     } catch (e) {

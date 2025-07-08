@@ -24,4 +24,4 @@ const detalleRutaSchema = new mongoose.Schema({
   },
 });
 
-export default mongoose.model("detalleRruta", detalleRutaSchema);
+export default mongoose.model("detallesRuta", detalleRutaSchema);

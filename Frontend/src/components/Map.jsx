@@ -149,11 +149,9 @@ function Map() {
     );
   };
 
-  // Componente para los marcadores en el mapa
   const DynamicMarkers = ({ routes }) => {
     const map = useMap();
 
-    // Centrar en las rutas filtradas
     useEffect(() => {
       if (routes.length > 0 && (selectedDriver || selectedVehicle)) {
         const bounds = routes.map((route) => route.location);
@@ -165,7 +163,6 @@ function Map() {
 
     return (
       <>
-        {/* Marcador de la bodega */}
         <Marker position={warehouseLocation}>
           <Popup>
             <div className="font-bold">Bodega Principal</div>
@@ -190,7 +187,6 @@ function Map() {
     );
   };
 
-  // Componente para los controles de selección
   const SelectControls = ({
     drivers,
     vehicles,
@@ -199,7 +195,6 @@ function Map() {
   }) => {
     return (
       <div className="absolute top-5 right-5 z-[1100] flex gap-4">
-        {/* Select de Conductores */}
         <div className="relative w-64">
           <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center">
             <UserRound className="text-gray-500" size={20} />
@@ -219,7 +214,6 @@ function Map() {
           </select>
         </div>
 
-        {/* Select de Vehículos */}
         <div className="relative w-64">
           <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center">
             <Car className="text-gray-500" size={20} />
@@ -242,12 +236,10 @@ function Map() {
     );
   };
 
-  // Componente para el panel de información expandible
   const InfoPanel = () => {
     const [expanded, setExpanded] = useState(false);
-    const [viewMode, setViewMode] = useState("general"); // 'general', 'driver', 'vehicle', 'combined'
+    const [viewMode, setViewMode] = useState("general");
 
-    // Determinar el modo de vista basado en las selecciones
     useEffect(() => {
       if (selectedDriver && selectedVehicle) {
         setViewMode("combined");
@@ -260,7 +252,6 @@ function Map() {
       }
     }, [selectedDriver, selectedVehicle]);
 
-    // Contenido compacto (vista previa)
     const renderCompactContent = () => {
       switch (viewMode) {
         case "combined":
@@ -312,7 +303,6 @@ function Map() {
       }
     };
 
-    // Contenido expandido (detalle completo)
     const renderExpandedContent = () => {
       switch (viewMode) {
         case "combined":
@@ -490,17 +480,14 @@ function Map() {
         }`}
       >
         <div className="p-4">
-          {/* Contenido principal */}
           <div className={expanded ? "hidden" : "block"}>
             {renderCompactContent()}
           </div>
 
-          {/* Contenido expandido */}
           <div className={expanded ? "block" : "hidden"}>
             {renderExpandedContent()}
           </div>
 
-          {/* Botón para expandir/contraer */}
           <button
             onClick={() => setExpanded(!expanded)}
             className="mt-2 w-full flex items-center justify-center text-gray-600 hover:text-gray-800 transition-colors"

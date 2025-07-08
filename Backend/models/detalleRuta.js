@@ -37,7 +37,6 @@ class DetalleRutaModelo {
       _id: new mongoose.Types.ObjectId(id),
     });
   }
-  // Borra todos los detalles asociados a una ruta
   async deleteManyByRuta(id_ruta) {
     return await DetalleRuta.deleteMany({
       id_ruta: new mongoose.Types.ObjectId(id_ruta),

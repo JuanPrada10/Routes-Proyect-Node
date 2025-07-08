@@ -23,7 +23,7 @@ class vehiculosController {
   async delete(req, res) {
     try {
       const { id } = req.params;
-      // Verificar si el vehículo tiene rutas asociadas
+
       const rutas = await import("../models/rutas.js").then((m) =>
         m.default.getAll()
       );
@@ -33,12 +33,10 @@ class vehiculosController {
           (r.vehiculo_id._id?.toString?.() === id || r.vehiculo_id.placa === id)
       );
       if (tieneRutas) {
-        return res
-          .status(400)
-          .json({
-            error:
-              "No se puede eliminar el vehículo porque tiene rutas asociadas.",
-          });
+        return res.status(400).json({
+          error:
+            "No se puede eliminar el vehículo porque tiene rutas asociadas.",
+        });
       }
       const data = await vehiculosModel.delete(id);
       res.status(206).json(data);

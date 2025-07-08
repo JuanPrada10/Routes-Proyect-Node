@@ -7,7 +7,6 @@ route.get("/rutas/:id", rutasController.getById);
 route.get("/rutas", rutasController.getAll);
 route.put("/rutas/:id", rutasController.update);
 route.delete("/rutas/:id", rutasController.delete);
-// Nuevo endpoint para programar ruta y detalles en un solo paso
 route.post("/programar-ruta", rutasController.programarRuta);
 
 export default route;
